@@ -160,6 +160,9 @@ cyan="#2CF9ED"
 
 export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
 
+# Agrego bind para ir mas rapido en navegacion con shift + up/down
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --bind 'shift-up:preview-half-page-up,shift-down:preview-half-page-down'"
+
 # Usar fd como backend para FZF (si está instalado)
 if command -v fd >/dev/null 2>&1; then
   export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
@@ -202,3 +205,6 @@ _fzf_comprun() {
 ##### --- FIN FZF EXTRAS --- #####
 
 [ -f "$HOME/.secrets.zsh" ] && source "$HOME/.secrets.zsh"
+
+# Enable vi-mode (Vim keybindings) in the shell
+bindkey -v

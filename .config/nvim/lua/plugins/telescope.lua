@@ -12,7 +12,15 @@ return {
     },
     config = function()
         local telescope = require("telescope")
-        local builtin = require("telescope.builtin")
+        local builtin   = require("telescope.builtin")
+        local actions   = require("telescope.actions")
+        local v         = require("telescope.config").values
+
+        -- Tomamos los argumentos por defecto de vimgrep y les añadimos --hidden y exclusión de .git
+        local vimgrep_arguments = { unpack(v.vimgrep_arguments) }
+        table.insert(vimgrep_arguments, "--hidden")
+        table.insert(vimgrep_arguments, "--glob")
+        table.insert(vimgrep_arguments, "!.git/")
 
         telescope.setup {
             extensions = {
@@ -24,28 +32,33 @@ return {
                 },
             },
             defaults = {
+                vimgrep_arguments = vimgrep_arguments,  -- 👈 AQUÍ estaba faltando
                 mappings = {
                     i = {
-                        ["<C-h>"] = require('telescope.actions').select_horizontal,
-                        ["<C-v>"] = require('telescope.actions').select_vertical,
+                        ["<C-h>"]   = actions.select_horizontal,
+                        ["<C-v>"]   = actions.select_vertical,
+                        ["<S-Up>"]  = actions.preview_scrolling_up,
+                        ["<S-Down>"] = actions.preview_scrolling_down,
                     },
                     n = {
-                        ["<C-h>"] = require('telescope.actions').select_horizontal,
-                        ["<C-v>"] = require('telescope.actions').select_vertical,
+                        ["<C-h>"]   = actions.select_horizontal,
+                        ["<C-v>"]   = actions.select_vertical,
+                        ["<S-Up>"]  = actions.preview_scrolling_up,
+                        ["<S-Down>"] = actions.preview_scrolling_down,
                     },
                 },
                 file_ignore_patterns = {
                     "^%.git/",
                     "venv/",
-                    "%.pyc",          -- ignora archivos compilados
+                    "%.pyc",
                     "__pycache__/",
                     "node_modules/",
                     ".mypy_cache/",
-                }, -- Ignorar carpetas ocultas específicas
+                },
             },
             pickers = {
                 find_files = {
-                    hidden = true,  -- Esto incluye archivos ocultos en los resultados
+                    hidden = true, -- Esto incluye archivos ocultos en los resultados
                 },
             },
         }
