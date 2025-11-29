@@ -132,8 +132,6 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 
-# Set up fzf key binding and fuzzy completion
-eval "$(fzf --zsh)"
 
 # Load ASDF only if it is installed
 if [ -f "$HOME/.asdf/asdf.sh" ]; then
@@ -226,3 +224,6 @@ _fzf_comprun() {
 
 # Enable vi-mode (Vim keybindings) in the shell
 bindkey -v
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
