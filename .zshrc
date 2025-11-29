@@ -146,6 +146,9 @@ if [[ "$(uname)" == "Darwin" ]]; then
   # --- Oracle Client ---
   export ORACLE_CLIENT_PATH=/opt/oracle/instantclient_23_3
   export DYLD_LIBRARY_PATH=$ORACLE_CLIENT_PATH
+elif [[ "$(uname)" == "Linux" ]]; then
+  # --- Linux specific paths (e.g. for Raspberry Pi) ---
+  export PATH="$HOME/.local/bin:$PATH"
 fi
 
 alias ls="eza --icons=always"
