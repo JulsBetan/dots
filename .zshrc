@@ -109,7 +109,10 @@ source $ZSH/oh-my-zsh.sh
 
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+# Load Pyenv only if the command exists
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
 
 if [[ "$(uname)" == "Darwin" ]]; then
   # --- macOS specific aliases ---
@@ -132,8 +135,13 @@ export PATH="$HOME/.npm-global/bin:$PATH"
 # Set up fzf key binding and fuzzy completion
 eval "$(fzf --zsh)"
 
-. $HOME/.asdf/asdf.sh
-. $HOME/.asdf/completions/asdf.bash
+# Load ASDF only if it is installed
+if [ -f "$HOME/.asdf/asdf.sh" ]; then
+  . "$HOME/.asdf/asdf.sh"
+  if [ -f "$HOME/.asdf/completions/asdf.bash" ]; then
+    . "$HOME/.asdf/completions/asdf.bash"
+  fi
+fi
 
 if [[ "$(uname)" == "Darwin" ]]; then
   # --- Homebrew Paths ---
