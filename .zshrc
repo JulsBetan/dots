@@ -111,7 +111,10 @@ export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
-alias caffeinate="caffeinate -i"
+if [[ "$(uname)" == "Darwin" ]]; then
+  # --- macOS specific aliases ---
+  alias caffeinate="caffeinate -i"
+fi
 alias ll='ls -l --sort=modified -a'
 
 
@@ -131,15 +134,19 @@ eval "$(fzf --zsh)"
 
 . $HOME/.asdf/asdf.sh
 . $HOME/.asdf/completions/asdf.bash
-export PATH="/opt/homebrew/opt/mariadb-connector-c/bin:$PATH"
 
-export ORACLE_CLIENT_PATH=/opt/oracle/instantclient_23_3
-export DYLD_LIBRARY_PATH=$ORACLE_CLIENT_PATH
+if [[ "$(uname)" == "Darwin" ]]; then
+  # --- Homebrew Paths ---
+  export PATH="/opt/homebrew/opt/mariadb-connector-c/bin:$PATH"
+  export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
+  export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/bzip2/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/bzip2/include"
+  export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/bzip2/lib/pkgconfig"
 
-export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
-export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib -L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/bzip2/lib"
-export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/bzip2/include"
-export PKG_CONFIG_PATH="/opt/homebrew/opt/openssl@3/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/bzip2/lib/pkgconfig"
+  # --- Oracle Client ---
+  export ORACLE_CLIENT_PATH=/opt/oracle/instantclient_23_3
+  export DYLD_LIBRARY_PATH=$ORACLE_CLIENT_PATH
+fi
 
 alias ls="eza --icons=always"
 
