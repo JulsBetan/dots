@@ -36,7 +36,7 @@
 --         vim.cmd.colorscheme("catppuccin")
 --     end,
 -- }
---
+-- --
 -- return {
 --   "folke/tokyonight.nvim",
 --   lazy = false,
@@ -85,8 +85,6 @@ return {
   config = function()
     local transparent = false -- set to true if you would like to enable transparency
 
-    -- local bg = "#1A202C" -- Azul/gris oscuro
-    -- local bg_dark = "#161B21" -- Un poco más oscuro para barras laterales/etc.
     local bg = "#011628"
     local bg_dark = "#011423"
     local bg_highlight = "#143652"

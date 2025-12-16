@@ -1,0 +1,20 @@
+gui:
+    editor: "nvim"
+    theme:
+      # selectedLineBgColor: ['magenta']
+      selectedLineBgColor: ['#033259']
+
+git:
+    autoStash: true
+    pull:
+      mode: "rebase"
+    merge:
+      conflictResolution:
+        diff3: true
+
+paging:
+    colorArg: always
+    pager: delta --side-by-side
+
+
+

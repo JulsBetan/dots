@@ -1,0 +1,23 @@
+lastupdatecheck: 0
+recentrepos:
+    - /Users/juliobetancourt/dotfiles
+    - /Users/juliobetancourt/Documents/DEV/Tigo/tigo-python-slim
+    - /Users/juliobetancourt/Documents/DEV/omnia/frontend_omnia
+    - /Users/juliobetancourt/Documents/DEV/omnia/deploy_omnia
+    - /Users/juliobetancourt/Documents/DEV/omnia/backend_omnia
+    - /Users/juliobetancourt/dev/omnia/deploy_omnia
+    - /Users/juliobetancourt/dev/omnia/frontend_omnia
+startuppopupversion: 5
+lastversion: 0.43.1
+customcommandshistory:
+    - q
+    - exit
+    - ""
+hidecommandlog: false
+ignorewhitespaceindiffview: false
+diffcontextsize: 3
+renamesimilaritythreshold: 50
+localbranchsortorder: recency
+remotebranchsortorder: alphabetical
+gitlogorder: topo-order
+gitlogshowgraph: always

@@ -56,6 +56,9 @@ return {
         theme = my_lualine_theme,
       },
       sections = {
+        lualine_c = {
+          { 'filename', path = 1 } -- Muestra la ruta relativa y el nombre del archivo
+        },
         lualine_x = {
           {
             lazy_status.updates,

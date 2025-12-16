@@ -48,17 +48,20 @@ return {
                     },
                 },
                 file_ignore_patterns = {
-                    "^%.git/",
+                    "%.git/",
                     "venv/",
                     "%.pyc",
                     "__pycache__/",
                     "node_modules/",
                     ".mypy_cache/",
+                    "__init__.py",
+                    "grafana/",
                 },
             },
             pickers = {
                 find_files = {
                     hidden = true, -- Esto incluye archivos ocultos en los resultados
+                    find_command = { "fd", "--type", "f", "--no-ignore", "--hidden" },
                 },
             },
         }

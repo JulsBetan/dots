@@ -132,7 +132,6 @@ export NVM_DIR="$HOME/.nvm"
 export PATH="$HOME/.npm-global/bin:$PATH"
 export PATH="$HOME/.npm-global/bin:$PATH"
 
-
 # Load ASDF only if it is installed
 if [ -f "$HOME/.asdf/asdf.sh" ]; then
   . "$HOME/.asdf/asdf.sh"
@@ -181,7 +180,7 @@ export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS --bind 'shift-up:preview-half-page-up
 
 # Usar fd como backend para FZF (si está instalado)
 if command -v fd >/dev/null 2>&1; then
-  export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+  export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --no-ignore --exclude .git --exclude .venv --exclude venv --exclude node_modules --exclude __pycache__ --exclude .mypy_cache --exclude .DS_Store --exclude '__init__.py' --exclude '*.pyc'"
   export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
   export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
 

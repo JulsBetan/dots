@@ -41,3 +41,4 @@ vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
 vim.o.foldlevel = 99 -- Para mantener los pliegues abiertos por defecto
 vim.o.foldenable = true
 
+vim.keymap.set("n", "<leader>Y", ':%y+<CR>', { desc = "Copy entire file to system clipboard" })
