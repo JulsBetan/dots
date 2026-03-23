@@ -2,6 +2,8 @@ lastupdatecheck: 0
 recentrepos:
     - /Users/juliobetancourt/dotfiles
     - /Users/juliobetancourt/Documents/DEV/Tigo/tigo-python-slim
+    - /Users/juliobetancourt/Documents/DEV/superva
+    - /Users/juliobetancourt/dev/superva
     - /Users/juliobetancourt/Documents/DEV/omnia/frontend_omnia
     - /Users/juliobetancourt/Documents/DEV/omnia/deploy_omnia
     - /Users/juliobetancourt/Documents/DEV/omnia/backend_omnia
@@ -10,6 +12,7 @@ recentrepos:
 startuppopupversion: 5
 lastversion: 0.43.1
 customcommandshistory:
+    - Backoffice Uso de nuevas vistas para producto y categorias
     - q
     - exit
     - ""

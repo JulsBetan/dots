@@ -21,6 +21,10 @@ config.colors = {
 config.font = wezterm.font("MesloLGS Nerd Font Mono")
 config.font_size = 13
 
+-- Make double-click selection include extensions and paths
+config.selection_word_boundary = " \t\n{}[]()\"'`"
+config.copy_on_select = true
+
 config.enable_tab_bar = false
 
 config.window_decorations = "RESIZE"
