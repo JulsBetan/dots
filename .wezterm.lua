@@ -22,14 +22,14 @@ config.font = wezterm.font("MesloLGS Nerd Font Mono")
 config.font_size = 13
 
 -- Make double-click selection include extensions and paths
-config.selection_word_boundary = " \t\n{}[]()\"'`"
-config.copy_on_select = true
+-- config.selection_word_boundary = " \t\n{}[]()\"'`"
+-- config.copy_on_select = true
 
 config.enable_tab_bar = false
 
 config.window_decorations = "RESIZE"
-config.window_background_opacity = 0.8
-config.macos_window_background_blur = 10
+config.window_background_opacity = 1
+config.macos_window_background_blur = 0
 
 -- and finally, return the configuration to wezterm
 return config

@@ -1,148 +1,150 @@
-# Dotfiles Agent Guidelines
+# Dotfiles Agent Guide
 
 ## Scope
-These guidelines apply to the entire `dotfiles` repo. There is a more specific
-`AGENTS.md` under `.config/nvim/`; follow it for any Neovim-related changes.
+- These rules apply to the entire `dotfiles` repository.
+- For Neovim work, also follow `.config/nvim/AGENTS.md` (it is more specific).
+- If two rules conflict, prefer the more specific file for that subtree.
 
-## Repository Layout
-- `.zshrc` contains interactive shell config and aliases.
-- `.tmux.conf` holds tmux bindings, plugins, and theme settings.
-- `.wezterm.lua` defines the WezTerm terminal configuration in Lua.
-- `lazygit/Library/Application Support/lazygit/config.yml` is LazyGit config.
-- `.config/nvim/` contains the Neovim Lua config (see nested rules).
+## Repository Map
+- `.zshrc`: interactive shell config (aliases, exports, startup behavior).
+- `.tmux.conf`: keybindings, statusline theme, TPM plugins.
+- `.wezterm.lua`: terminal UI and runtime behavior.
+- `lazygit/Library/Application Support/lazygit/config.yml`: LazyGit options.
+- `.config/nvim/`: Lua-based Neovim setup (plugins, settings, lazy.nvim).
+- `.config/opencode/package.json`: minimal dependency pinning.
+- `Brewfile`: machine package bootstrap list.
 
 ## Build, Lint, and Test Commands
-There is no formal build or test runner for this repo. Use the commands below
-for targeted validation of the edited file or tool.
+This repo has no single global build/test pipeline. Validate only what you changed.
 
-### Shell/Zsh
-- Syntax check: `zsh -n .zshrc`
-- Reload in current shell: `source ~/.zshrc`
-- Single change validation: re-run the affected alias or function manually.
+### Quick Commands by Area
+- Zsh syntax check: `zsh -n .zshrc`
+- Zsh load check: `zsh -ic 'source ~/.zshrc'`
+- Tmux reload config: `tmux source-file ~/.tmux.conf`
+- Tmux fresh session smoke test: `tmux new -d -s dotfiles_test && tmux kill-session -t dotfiles_test`
+- WezTerm config check: `wezterm start --always-new-process >/dev/null 2>&1` (manual visual validation still required)
+- Neovim clean boot: `nvim --clean -u .config/nvim/init.lua`
+- Neovim plugin sync: `nvim --headless "+Lazy sync" +qa`
+- Neovim health check: `nvim --headless "+checkhealth" +qa`
+- LazyGit config smoke test: `lazygit --use-config-file="lazygit/Library/Application Support/lazygit/config.yml"`
 
-### Tmux
-- Reload config in a tmux session: `tmux source-file ~/.tmux.conf`
-- Quick sanity check: open a new session and verify keybinds.
-- Single change validation: trigger only the updated binding/theme entry.
+### Single-Test Equivalents (Targeted Validation)
+Use one narrow command that matches the edited area.
 
-### WezTerm
-- Manual check: launch WezTerm and verify the UI matches `.wezterm.lua`.
-- Single change validation: adjust only one config field and relaunch.
+- If `.zshrc` alias/function changed:
+  `zsh -ic 'source ~/.zshrc; <alias-or-function> --help >/dev/null 2>&1 || true'`
+- If a tmux keybind changed:
+  reload config, then trigger only that bind in one session.
+- If tmux theme/status changed:
+  reload and verify statusline rendering only.
+- If `.wezterm.lua` changed:
+  relaunch WezTerm and verify only edited settings (font, colors, tabs, etc).
+- If Neovim plugin config changed:
+  run `nvim --headless "+Lazy sync" +qa`, then open one representative filetype.
+- If Neovim keymaps/autocmd changed:
+  boot Neovim and test exactly that map/autocmd behavior.
 
-### Neovim
-- Follow `.config/nvim/AGENTS.md` for detailed commands.
-- Typical command: `nvim --clean -u init.lua` (from the nested guide).
+### No Existing Unit-Test Framework
+- There is no `npm test`, `pytest`, `go test`, or `cargo test` workflow at repo root.
+- Treat focused runtime checks as the test strategy for this repository.
 
-### LazyGit
-- Manual check: open LazyGit and ensure config values are accepted.
+## Style Guide
+Keep edits minimal, local, and consistent with surrounding file style.
 
-### Single-Change Validation Checklist
-- Keep validations narrow to the edited file or setting.
-- For shell changes, open a new terminal and confirm startup.
-- For tmux, reload and check only the modified keybind.
-- For WezTerm, relaunch and confirm colors/fonts only.
-- For Neovim, follow `.config/nvim/AGENTS.md` and confirm `:checkhealth`.
-- For LazyGit, ensure no warnings appear at startup.
+### General Editing Rules
+- Preserve file structure and ordering unless reordering is required.
+- Do not reformat unrelated blocks.
+- Keep comments short and only for non-obvious choices.
+- Preserve existing Spanish comments/messages where present.
+- Prefer explicit configuration over clever abstractions.
 
-## Coding Style Guidelines
-Keep edits minimal and consistent with the existing file. Match indentation,
-quotes, and comment style that already exists in the file you touch.
+### Imports and Module Loading
+- Lua: `local x = require("module")` near first use or top-level when reused.
+- Avoid introducing global Lua symbols.
+- Shell: guard optional tools with `command -v tool >/dev/null 2>&1`.
+- Avoid eager `eval` unless already part of existing pattern.
 
-### General
-- Keep configuration declarative; avoid heavy logic unless necessary.
-- Prefer explicit, readable settings over clever one-liners.
-- Keep OS-specific logic guarded with `uname` checks.
-- Group related settings with blank lines or short headers.
-- Avoid duplicating PATH exports or alias definitions.
-- Favor idempotent exports and checks on startup.
-- Do not add inline comments unless needed for clarity.
-- Do not reorder unrelated settings without a reason.
-- Preserve Spanish comments when present.
+### Formatting and Layout
+- `.zshrc`: 2-space indentation in control blocks.
+- `.tmux.conf`: one directive per line; keep plugin and theme blocks grouped.
+- `.wezterm.lua`: keep existing indentation and `config` table style.
+- YAML files: preserve exact indentation and key style.
+- Keep logical blank lines between sections.
 
-### Shell/Zsh (`.zshrc`)
-- Use 2-space indentation inside `if`/`case` blocks.
-- Prefer `[[ ... ]]` for tests, and always quote variables.
-- Guard optional tools with `command -v tool >/dev/null 2>&1`.
-- Environment variables are UPPER_CASE; locals are lower_case.
-- Use `alias name='command'` for simple shortcuts.
-- Keep related exports grouped (e.g., PATH, language managers).
-- Avoid exporting secrets; source them from `.secrets.zsh` only.
-- Use `command -v` checks before `eval` or `source` calls.
-- Keep PATH exports idempotent and avoid duplicates.
-- Keep OS-specific PATH changes under `uname` checks.
+### Types and Data Shapes
+- Lua tables should be explicit and stable; avoid shape-changing logic.
+- Use booleans (`true`/`false`) and explicit string values.
+- Do not invent new config keys unless documented by the tool/plugin.
+
+### Naming Conventions
+- Shell function names: `snake_case`.
+- Environment variables: `UPPER_CASE`.
+- Lua locals/functions: `snake_case`.
+- Alias names: short, descriptive, and consistent with existing aliases.
+
+### Error Handling and Safety
+- Prefer safe fallbacks over hard failures for optional dependencies.
+- Keep startup paths fast; avoid long-running install/update commands at boot.
+- Never remove guards around missing tools unless replacing with better guards.
+- Quote variable expansions in shell unless intentional word splitting is needed.
+- Avoid destructive commands in startup config.
+
+## Tool-Specific Notes
+
+### Zsh (`.zshrc`)
+- Keep PATH updates idempotent and avoid duplicates.
+- Use `$HOME` instead of hard-coded user paths when possible.
+- Group exports, aliases, and tool bootstrap blocks clearly.
 
 ### Tmux (`.tmux.conf`)
-- One directive per line; keep the order stable.
-- Prefer `set -g`/`setw -g` for global options.
-- Keep plugin declarations together at the top or in a labeled block.
-- Comments can be short and may be in Spanish (as in existing config).
-- Avoid multiline commands unless tmux requires `\` escaping.
-- Use `bind-key` long form when adding new bindings.
-- Avoid reusing keys already bound by tmux defaults.
-- Keep theme-related options grouped together.
+- Use `set -g`/`setw -g` for globals.
+- Keep TPM plugin declarations in one contiguous block.
+- Keep keybind additions close to related navigation/split bindings.
 
 ### WezTerm (`.wezterm.lua`)
-- Use `local` for module imports and config variables.
-- Keep configuration in a single `config` table.
-- Match existing indentation (tabs in this file).
-- Prefer hex strings for colors; avoid computed values.
-- Keep font/opacity/window settings grouped for readability.
-- Avoid global variables; return only the `config` table.
-- Prefer direct assignments over helper functions.
+- Keep all settings within one returned config table.
+- Prefer static values over computed side effects.
+- Validate visually after edits; some failures are runtime/UI only.
 
-### LazyGit (`config.yml`)
-- Preserve YAML indentation exactly (2 spaces).
-- Avoid adding new keys unless documented by LazyGit.
-- Prefer explicit booleans (`true`/`false`) over implicit values.
-- Keep keys in the same order as existing blocks.
+### Neovim (`.config/nvim`)
+- Read and follow `.config/nvim/AGENTS.md` before changing files.
+- Do not edit `lazy-lock.json` manually.
+- Validate with clean boot and health checks after plugin changes.
 
-## Error Handling and Safety
-- Prefer no-op checks over hard failures when tools are missing.
-- Keep shell guards around optional tools (e.g., `fd`, `eza`, `bat`).
-- Avoid removing existing safety checks or OS guards.
-- Do not commit machine-specific paths unless they are already present.
-- Avoid auto-install or update commands in shell startup.
-- Keep exports side-effect free and fast on startup.
-- When adding defaults, prefer safe fallbacks over aborting.
+### LazyGit (`lazygit/.../config.yml`)
+- Keep keys ordered as currently structured in the file.
+- Prefer explicit booleans and avoid implicit YAML shortcuts.
 
-## Paths and OS Considerations
-- Keep macOS/Linux blocks separated by `uname` checks.
-- Use `$HOME` instead of hard-coded user paths.
-- Avoid adding new absolute paths unless already present.
-- When extending PATH, prepend or append once.
-- Quote values that may include spaces.
-- Prefer `export VAR="value"` for clarity.
+## Secrets, Local State, and Generated Files
+- Never commit secrets, tokens, or machine-specific credentials.
+- Do not commit caches or generated runtime artifacts.
+- If a tool generates local files, keep them ignored.
+- Avoid adding absolute local paths unless the repo already depends on them.
 
-## Secrets and Local Files
-- Store secrets in `.secrets.zsh` and never commit them.
-- Avoid adding cache directories (e.g., `.cache`, `.mypy_cache`).
-- Keep generated plugin data out of the repo.
-- Use `.gitignore` if a tool creates new caches.
+## Review Checklist for Agents
+- Confirm edited file loads without errors.
+- Confirm no duplicate PATH/export/alias entries were introduced.
+- Confirm changed keybinds do not conflict with nearby mappings.
+- Confirm plugin/theme changes remain in their existing section.
+- Confirm only relevant files were modified.
 
-## Imports, Types, and Naming
-- Lua: use `local module = require("module")` at the top.
-- Lua: prefer `snake_case` for locals, keep globals out of config.
-- Shell: functions should be `snake_case`, aliases short and readable.
-- Tmux: option names mirror tmux defaults; do not rename.
+## Cursor and Copilot Rules
+- No `.cursor/rules/` files found.
+- No `.cursorrules` file found.
+- No `.github/copilot-instructions.md` file found.
+- If these files are added later, merge their instructions into this guide.
 
-## Formatting
-- Keep line length reasonable but do not reflow existing blocks.
-- Preserve blank lines that separate logical sections.
-- Do not reorder unrelated settings without a reason.
+## Agent Workflow Expectations
+- Prefer targeted checks over broad exploratory edits.
+- Keep diffs small and purpose-driven.
+- Explain why a config change is needed, not just what changed.
+- For Neovim-specific tasks, report both Lazy and runtime validation results.
 
-## Change Review Checklist
-- Confirm the edited tool starts without errors.
-- Verify new aliases or binds do not shadow existing ones.
-- Check for duplicate exports after PATH changes.
-- Ensure theme-related tweaks stay grouped together.
-- Keep new entries near similar settings.
-
-## Cursor/Copilot Rules
-- No `.cursor/rules`, `.cursorrules`, or `.github/copilot-instructions.md`
-  files are present in this repository.
-
-## Notes for Agentic Changes
-- If editing Neovim files, read `.config/nvim/AGENTS.md` first.
-- Do not edit `lazy-lock.json` manually (per nested rules).
-- Avoid committing generated or machine-specific cache files.
-- Keep changes scoped to the requested tool or config.
+## Git and Change Scope
+- Do not revert unrelated local edits in a dirty working tree.
+- Never use destructive git commands (`reset --hard`, `checkout --`) unless requested.
+- Do not edit lockfiles manually unless the tool generated the change.
+- Avoid broad refactors for style-only reasons in config files.
+- Keep commits focused per tool area (zsh/tmux/wezterm/nvim/lazygit).
+- In reviews, call out any machine-specific assumptions introduced by a change.
+- If a validation command cannot run locally, state what was skipped and why.

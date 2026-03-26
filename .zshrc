@@ -104,6 +104,8 @@ export VISUAL='nvim'
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+alias python=python3
+
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 # Load Pyenv only if the command exists
@@ -224,6 +226,15 @@ autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd 'V' edit-command-line
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if [[ -f "$HOME/.fzf.zsh" ]]; then
+  source "$HOME/.fzf.zsh"
+elif command -v brew >/dev/null 2>&1; then
+  fzf_prefix="$(brew --prefix fzf 2>/dev/null)"
+  if [[ -n "$fzf_prefix" ]]; then
+    [[ -f "$fzf_prefix/shell/completion.zsh" ]] && source "$fzf_prefix/shell/completion.zsh"
+    [[ -f "$fzf_prefix/shell/key-bindings.zsh" ]] && source "$fzf_prefix/shell/key-bindings.zsh"
+  fi
+fi
 
 export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"

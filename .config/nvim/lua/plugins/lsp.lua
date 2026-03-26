@@ -42,6 +42,16 @@ return {
   -- Lua (lua_ls)
   vim.lsp.config["lua_ls"] = {
     on_attach = on_attach,
+    cmd = (function()
+      local mason_cmd = vim.fn.stdpath("data") .. "/mason/bin/lua-language-server"
+      if vim.fn.executable(mason_cmd) == 1 then
+        return { mason_cmd }
+      end
+      if vim.fn.executable("lua-language-server") == 1 then
+        return { "lua-language-server" }
+      end
+      return nil
+    end)(),
     settings = {
       Lua = {
         telemetry = { enable = false },
@@ -54,7 +64,6 @@ return {
   -- Python (pylsp)
   vim.lsp.config["pylsp"] = {
     on_attach = on_attach,
-    --cmd = { vim.fn.getcwd() .. "/venv/bin/pylsp" }, -- mantengo tu venv local
     cmd = (function()
         local local_cmd = vim.fn.getcwd() .. "/venv/bin/pylsp"
         if vim.fn.executable(local_cmd) == 1 then
@@ -64,7 +73,10 @@ return {
         if vim.fn.executable(mason_cmd) == 1 then
           return { mason_cmd }          -- fallback a Mason
         end
-        return { "pylsp" }              -- último recurso (PATH del sistema)
+        if vim.fn.executable("pylsp") == 1 then
+          return { "pylsp" }            -- fallback al PATH del sistema
+        end
+        return nil
     end)(),
     settings = {
       pylsp = {
@@ -79,6 +91,16 @@ return {
   -- YAML (yamlls)
   vim.lsp.config["yamlls"] = {
     on_attach = on_attach,
+    cmd = (function()
+      local mason_cmd = vim.fn.stdpath("data") .. "/mason/bin/yaml-language-server"
+      if vim.fn.executable(mason_cmd) == 1 then
+        return { mason_cmd, "--stdio" }
+      end
+      if vim.fn.executable("yaml-language-server") == 1 then
+        return { "yaml-language-server", "--stdio" }
+      end
+      return nil
+    end)(),
     settings = {
       yaml = {
         schemas = {
@@ -118,19 +140,34 @@ return {
   -- Lua
   vim.api.nvim_create_autocmd("FileType", {
     pattern = { "lua" },
-    callback = function() vim.lsp.start(vim.lsp.config["lua_ls"]) end,
+    callback = function()
+      local cfg = vim.lsp.config["lua_ls"]
+      if cfg.cmd and vim.fn.executable(cfg.cmd[1]) == 1 then
+        vim.lsp.start(cfg)
+      end
+    end,
   })
 
   -- Python
   vim.api.nvim_create_autocmd("FileType", {
     pattern = { "python" },
-    callback = function() vim.lsp.start(vim.lsp.config["pylsp"]) end,
+    callback = function()
+      local cfg = vim.lsp.config["pylsp"]
+      if cfg.cmd and vim.fn.executable(cfg.cmd[1]) == 1 then
+        vim.lsp.start(cfg)
+      end
+    end,
   })
 
   -- YAML
   vim.api.nvim_create_autocmd("FileType", {
     pattern = { "yaml", "yml" },
-    callback = function() vim.lsp.start(vim.lsp.config["yamlls"]) end,
+    callback = function()
+      local cfg = vim.lsp.config["yamlls"]
+      if cfg.cmd and vim.fn.executable(cfg.cmd[1]) == 1 then
+        vim.lsp.start(cfg)
+      end
+    end,
   })
 
   -- TS / JS
